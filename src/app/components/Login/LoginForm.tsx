@@ -1,19 +1,29 @@
 /* eslint-disable @next/next/no-img-element */
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useRouter } from 'next/navigation'
 import { useGlobalContext } from '@/app/context/GlobalContextProvider';
 
-import { Button, InputLabel, Paper, Stack, TextField } from "@mui/material"
+import { Button, CircularProgress, InputLabel, Paper, Stack, TextField } from "@mui/material"
 
 export const LoginForm = () => {
+    const [loading, setLoading] = useState(false);
     const router = useRouter();
     const { token, channel, appId, setChannel, setAppId, setToken } = useGlobalContext();
 
     useEffect(()=> {
-        setChannel(""), 
-        setAppId(""), 
-        setToken("") 
+        setChannel(""); 
+        setAppId("");
+        setToken("");
+        setLoading(false)
     }, [])
+
+    const loginSession = () => {
+        setLoading(true)
+        setTimeout(()=>  {
+            setLoading(false)
+            router.push('/room')
+        }, 2000);
+    }
 
     return(
         <Paper elevation={0} variant="outlined" sx={{padding: '40px'}}>
@@ -44,7 +54,20 @@ export const LoginForm = () => {
                 </Stack>
                 <Button variant="contained" sx={{width: 300}} 
                 disabled={!token.length || !channel.length || !appId.length}
-                onClick={() => router.push('/room')}>Join room</Button>
+                onClick={loginSession}>Join room 
+                    {loading &&
+                    <CircularProgress
+                        size={30}
+                        sx={{
+                        color: 'white',
+                        position: 'absolute',
+                        top: '50%',
+                        left: '50%',
+                        marginTop: '-12px',
+                        marginLeft: '-12px',
+                        }}
+                    />}
+                </Button>
             </Stack>
         </Paper>
     )
